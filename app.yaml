@@ -5,11 +5,22 @@ api_version: 1
 threadsafe: true
 
 handlers:
+- url: /.ico
+  static_files: favicon.ico
+  upload: .ico
 - url: /css
   static_dir: css
+- url: /bootstrap-3.3.4/dist/css/
+  static_dir: bootstrap-3.3.4/dist/css/
+- url: /bootstrap-3.3.4/dist/js/
+  static_dir: bootstrap-3.3.4/dist/js/
+- url: /img/
+  static_dir: img/
 - url: /.*
   script: main.application
   
 libraries:
 - name: webapp2
+  version: latest
+- name: jinja2
   version: latest

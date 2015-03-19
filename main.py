@@ -6,40 +6,110 @@ from tweepy import *
 
 from google.appengine.ext import ndb
 
+import os
+import urllib
+import cgi
+import jinja2
+
+JINJA_ENVIRONMENT = jinja2.Environment(
+    loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
+    extensions=['jinja2.ext.autoescape'],
+    autoescape=True)
+
+
+class HTMLPage(webapp2.RequestHandler):
+
+    def get(self):
+        template_values = {
+            'email': 'Gerald@email.com',
+            'title': 'Quantum Solutions: TweetSuite - Home',
+        }
+
+        template = JINJA_ENVIRONMENT.get_template('open.html')
+        self.response.write(template.render(template_values))
+
+
 
 registerform="""
-<link rel="stylesheet" href="css/style.css">
-<form action="/saveregister" class="login">
-	<text type="label" class="login-help">Email</text>
-	<input type="email" name="remail" class="login-input">
-	<text type="label" class="login-help">Password</text>
-	<input type="password" name="rpwd" class="login-input">
-	<input type="submit" value="Register" class="login-submit">
+<link rel="stylesheet" href="bootstrap-3.3.4/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="bootstrap-3.3.4/dist/css/signin.css">
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+  <ul class="nav navbar-nav">
+  <li><a href="" class="navbar-brand">
+<img src="img/logo.png"></a></li>
+  <li><a href="/" class="active">Home</a></li>
+  <li><a href="/login">Login</a></li>
+  <li><a href="/register">Register</a></li>
+  <li><a href="/open">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="container">
+<div class="form-signin">
+<form action="/saveregister" class="col-lg-2">
+	<span class="help-inline">Email</span>  
+	<input type="email" name="remail" class="span3">
+	<span class="help-inline">Password</span>  
+	<input type="password" name="rpwd" class="span3">
+	<input type="submit" value="Register" class="btn btn-lg btn-primary ">
 </form>
+</div>
+</div>
 """
 
 loginform="""
-<link rel="stylesheet" href="css/style.css">
-<form action="/verifylogin" class="login">
-	<text type="label" class="login-help">Email</text>
-	<input type="email" name="lemail" class="login-input" value="email@example.com">
-	<text type="label" class="login-help">Password</text>
-	<input type="password" name="lpwd" class="login-input" value="password">
-	<input type="submit" value="Login" class="login-submit">
+<link rel="stylesheet" href="bootstrap-3.3.4/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="bootstrap-3.3.4/dist/css/signin.css">
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+  <ul class="nav navbar-nav">
+  <li><a href="" class="navbar-brand">
+<img src="img/logo.png"></a></li>
+  <li><a href="/" class="active">Home</a></li>
+  <li><a href="/login">Login</a></li>
+  <li><a href="/register">Register</a></li>
+  <li><a href="/open">Contact</a></li>
+  </ul>
+</nav>
+<div class="container">
+<div class="form-signin">
+<form action="/verifylogin" class="col-lg-2">
+	<span class="help-inline">Email</span>  
+	<input type="email" name="lemail" class="span3" value="email@example.com">
+	<span class="help-inline">Password</span>  
+	<input type="password" name="lpwd" class="span3">
+	<input type="submit" value="Login" class="btn btn-lg btn-primary ">
 </form>
+</div>
+</div>
 """
 
 
 form="""
-<link rel="stylesheet" href="css/style.css">
-<form action="/postform" class="login">
-	<input name="q" class="login-input">
-	<input type="submit" value="Post Tweet" class="login-submit">
+<link rel="stylesheet" href="bootstrap-3.3.4/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="bootstrap-3.3.4/dist/css/signin.css">
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+  <ul class="nav navbar-nav">
+  <li><a href="" class="navbar-brand">
+<img src="img/logo.png"></a></li>
+  <li><a href="/" class="active">Home</a></li>
+  <li><a href="/login">Login</a></li>
+  <li><a href="/register">Register</a></li>
+  <li><a href="/open">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="container">
+<form action="/postform" class="col-lg-2">
+	<div class="help-inline">.</div>  
+	<div class="help-inline">.</div>  
+    <input type="text" name="q" class="span3">
+    <input type="submit" value="Post Tweet" class="btn btn-lg btn-primary">
 </form>
+</div>
 """
 
 twitterfeed="""
-<div class="login">
+<div >
 <a class="twitter-timeline" href="https://twitter.com/gvtweetsuite" data-widget-id="574700036770152448">Tweets by @gvtweetsuite</a>
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 </div>
@@ -136,4 +206,5 @@ application = webapp2.WSGIApplication([
     ('/login', LoginPage),
     ('/verifylogin', VerifyLogin),
     ('/postform', PostHandler),
+    ('/open', HTMLPage),
 ], debug=True)
