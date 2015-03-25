@@ -28,60 +28,28 @@ class HTMLPage(webapp2.RequestHandler):
         template = JINJA_ENVIRONMENT.get_template('open.html')
         self.response.write(template.render(template_values))
 
+class LoginPage(webapp2.RequestHandler):
+
+    def get(self):
+        template_values = {
+            'email': 'Gerald@email.com',
+            'title': 'Quantum Solutions: TweetSuite - Login',
+        }
+
+        template = JINJA_ENVIRONMENT.get_template('login.html')
+        self.response.write(template.render(template_values))
+class RegisterPage(webapp2.RequestHandler):
+
+    def get(self):
+        template_values = {
+            'email': 'Gerald@email.com',
+            'title': 'Quantum Solutions: TweetSuite - Register',
+        }
+
+        template = JINJA_ENVIRONMENT.get_template('register.html')
+        self.response.write(template.render(template_values))
 
 
-registerform="""
-<link rel="stylesheet" href="bootstrap-3.3.4/dist/css/bootstrap.min.css">
-<link rel="stylesheet" href="bootstrap-3.3.4/dist/css/signin.css">
-<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-  <ul class="nav navbar-nav">
-  <li><a href="" class="navbar-brand">
-<img src="img/logo.png"></a></li>
-  <li><a href="/" class="active">Home</a></li>
-  <li><a href="/login">Login</a></li>
-  <li><a href="/register">Register</a></li>
-  <li><a href="/open">Contact</a></li>
-  </ul>
-</nav>
-
-<div class="container">
-<div class="form-signin">
-<form action="/saveregister" class="col-lg-2">
-	<span class="help-inline">Email</span>  
-	<input type="email" name="remail" class="span3">
-	<span class="help-inline">Password</span>  
-	<input type="password" name="rpwd" class="span3">
-	<input type="submit" value="Register" class="btn btn-lg btn-primary ">
-</form>
-</div>
-</div>
-"""
-
-loginform="""
-<link rel="stylesheet" href="bootstrap-3.3.4/dist/css/bootstrap.min.css">
-<link rel="stylesheet" href="bootstrap-3.3.4/dist/css/signin.css">
-<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-  <ul class="nav navbar-nav">
-  <li><a href="" class="navbar-brand">
-<img src="img/logo.png"></a></li>
-  <li><a href="/" class="active">Home</a></li>
-  <li><a href="/login">Login</a></li>
-  <li><a href="/register">Register</a></li>
-  <li><a href="/open">Contact</a></li>
-  </ul>
-</nav>
-<div class="container">
-<div class="form-signin">
-<form action="/verifylogin" class="col-lg-2">
-	<span class="help-inline">Email</span>  
-	<input type="email" name="lemail" class="span3" value="email@example.com">
-	<span class="help-inline">Password</span>  
-	<input type="password" name="lpwd" class="span3">
-	<input type="submit" value="Login" class="btn btn-lg btn-primary ">
-</form>
-</div>
-</div>
-"""
 
 
 form="""
@@ -97,15 +65,40 @@ form="""
   <li><a href="/open">Contact</a></li>
   </ul>
 </nav>
+    <div class="container">
+    <div class="pull-left">
+      <form class="post-tweet" action="/postform">
+        <h2 class="post-tweet-heading">Enter Tweet</h2>
+        <input type="text" name="q" class="form-control" placeholder="Tweet" required autofocus>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Post Tweet</button>
+      </form>
+    </div> <!-- /pull-left -->
+    </div> <!-- /container -->
+"""
+googlechart1="""
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load("visualization", "1.1", {packages:["bar"]});
+      google.setOnLoadCallback(drawChart);
+      function drawChart() {
+	  var data = google.visualization.arrayToDataTable([
+          ['TweetID', 'Retweets', 'Favorites']
+"""
 
-<div class="container">
-<form action="/postform" class="col-lg-2">
-	<div class="help-inline">.</div>  
-	<div class="help-inline">.</div>  
-    <input type="text" name="q" class="span3">
-    <input type="submit" value="Post Tweet" class="btn btn-lg btn-primary">
-</form>
-</div>
+googlechart2="""
+        var options = {
+          chart: {
+            title: 'Tweet Performance',
+            subtitle: 'Re-tweets and Favourites of recent 10 tweets',
+          },
+          bars: 'horizontal' // Required for Material Bar Charts.
+        };
+
+        var chart = new google.charts.Bar(document.getElementById('barchart_material'));
+
+        chart.draw(data, options);
+      }
+    </script>
 """
 
 twitterfeed="""
@@ -129,10 +122,6 @@ class Account(ndb.Model):
 
 #sandy.key.delete()
 
-class RegisterPage(webapp2.RequestHandler):
-    def get(self):
-        self.response.write(registerform)
-
 
 class SaveRegister(webapp2.RequestHandler):
     def get(self):
@@ -144,11 +133,6 @@ class SaveRegister(webapp2.RequestHandler):
             self.account = Account(email=remail, password=rpwd)
             self.account.put()
             self.redirect('/login')
-
-class LoginPage(webapp2.RequestHandler):
-    def get(self):
-        self.response.write(loginform)
-
 
 
 class VerifyLogin(webapp2.RequestHandler):
@@ -173,16 +157,66 @@ class MainPage(webapp2.RequestHandler):
     def get(self):
         #self.response.headers['Content-Type'] = 'text/plain'
         self.response.write(form)
-        self.response.write(twitterfeed)
+        #self.response.write(twitterfeed)
+        CONSUMER_KEY = 'mpIuWJYkQKUvaiS4FPwQpGVr8'
+        CONSUMER_SECRET = 'EWOz9A9om3tf85XsF89KbIVC5LUkHEZNhdy2PcHTfOr9tP4jjE'
+        # http://dev.twitter.com/apps/myappid/my_token
+        ACCESS_TOKEN_KEY = '3080403725-gleW4H38K4tJ69vtUFJDZgBCr2VtqFb3D06Xk7y'
+        ACCESS_TOKEN_SECRET = 'zWxk43qe3c8QlP6Pua2A81UvDTlpe90lqUVC5PxZEzcqg'
+
+        auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
+        auth.set_access_token(ACCESS_TOKEN_KEY, ACCESS_TOKEN_SECRET)
+        api = tweepy.API(auth)
+        pub = api.user_timeline()[:10]
+        self.response.write('<em>User Timeline::</em>')
+        self.response.write('<table class="table table-striped table-bordered table-condensed"><thead><tr><th>id</th><th>what</th><th>who</th><th># of retweets</th><th># of favorites</th><th>when</th></tr></thead><tbody>')
+        for i in pub:
+            self.response.write('<tr>')
+            self.response.write('<td>' + str(i.id) + '</td>')
+            self.response.write('<td>' + i.text + '</td>')
+            self.response.write('<td>' + i.user.name + '</td>')
+            #self.response.write('<td>' + str(i.user.followers_count) + '</td>')
+            self.response.write('<td>' + str(i.retweet_count) + '</td>')
+            self.response.write('<td>' + str(i.user.favourites_count) + '</td>')
+            self.response.write('<td>' + str(i.created_at) + '</td>')
+            self.response.write('</tr>')
+        self.response.write('</tbody></table> <hr>')
+        pub = api.home_timeline()[:10]
+        self.response.write('<em>Home Timeline::</em>')
+        self.response.write('<table class="table table-striped table-bordered table-condensed"><thead><tr><th>id</th><th>what</th><th>who</th><th># of retweets</th><th># of favorites</th><th>when</th></tr></thead><tbody>')
+        for i in pub:
+            self.response.write('<tr>')
+            self.response.write('<td>' + str(i.id) + '</td>')
+            self.response.write('<td>' + i.text + '</td>')
+            self.response.write('<td>' + i.user.name + '</td>')
+            #self.response.write('<td>' + str(i.user.followers_count) + '</td>')
+            self.response.write('<td>' + str(i.retweet_count) + '</td>')
+            self.response.write('<td>' + str(i.user.favourites_count) + '</td>')
+            self.response.write('<td>' + str(i.created_at) + '</td>')
+            self.response.write('</tr>')
+        self.response.write('</tbody></table><hr>')
+        self.response.write('<div id="barchart_material" style="width: 900px; height: 500px;"></div>')
+        self.response.write(googlechart1)
+        for i in pub:
+            self.response.write(',')
+            self.response.write('["' + str(i.id) + '",' + str(i.retweet_count) + ','+str(i.user.favourites_count)+']')
+        self.response.write(']);')
+        self.response.write(googlechart2)
+## Get the User object for twitter...
+#user = tweepy.api.get_user('twitter')
+# print user.screen_name
+# print user.followers_count
+# for friend in user.friends():
+   # print friend.screen_name
 
 class PostHandler(webapp2.RequestHandler):
     def get(self):
         q = self.request.get("q")
         tweet(q);
         #self.response.out.write(q + ' --> is posted to your Twitter profile!')
-        self.response.write(form)
-        time.sleep(10)
-        self.response.write(twitterfeed)
+        #time.sleep(10)
+        self.redirect('/')
+
 
 # Update the Twitter account authorized  
 # in settings.cfg with a status message.
